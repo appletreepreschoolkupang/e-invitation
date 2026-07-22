@@ -2,371 +2,433 @@
 <html lang="id">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
     <title>🔍 Scanner Kehadiran - Apple Tree Gala Dinner</title>
 
-    <!-- QR Scanner Library -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Montserrat:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
     <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
 
-    <style>
-      :root {
-        --gold: #c9a84c;
-        --navy: #1b2a4a;
-        --navy-dark: #0f1a30;
-        --success: #22c55e;
-        --error: #ef4444;
-        --warning: #f59e0b;
-      }
-
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-      }
-
-      body {
-        font-family: "Montserrat", sans-serif;
-        background: var(--navy-dark);
-        color: #fff;
-        min-height: 100vh;
-        padding: 20px;
-      }
-
-      .container {
-        max-width: 500px;
-        margin: 0 auto;
-      }
-
-      .header {
-        text-align: center;
-        padding: 20px 0;
-        border-bottom: 2px solid var(--gold);
-        margin-bottom: 20px;
-      }
-
-      .header h1 {
-        font-family: "Playfair Display", serif;
-        color: var(--gold);
-        font-size: 24px;
-      }
-
-      .header p {
-        font-size: 12px;
-        opacity: 0.7;
-        margin-top: 5px;
-      }
-
-      /* Scanner Area */
-      .scanner-box {
-        background: rgba(30, 45, 79, 0.9);
-        border: 2px solid var(--gold);
-        border-radius: 16px;
-        padding: 20px;
-        margin-bottom: 20px;
-      }
-
-      #reader {
-        width: 100%;
-        border-radius: 8px;
-        overflow: hidden;
-        background: #000;
-      }
-
-      #reader video {
-        width: 100%;
-        border-radius: 8px;
-      }
-
-      .scanner-controls {
-        display: flex;
-        gap: 10px;
-        margin-top: 15px;
-      }
-
-      .btn {
-        flex: 1;
-        padding: 12px;
-        border: none;
-        border-radius: 8px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.2s;
-      }
-
-      .btn-primary {
-        background: var(--gold);
-        color: var(--navy-dark);
-      }
-
-      .btn-primary:hover {
-        background: #e8d48b;
-      }
-
-      .btn-danger {
-        background: var(--error);
-        color: white;
-      }
-
-      .btn-danger:hover {
-        background: #dc2626;
-      }
-
-      .btn:disabled {
-        opacity: 0.5;
-        cursor: not-allowed;
-      }
-
-      /* Result Display */
-      .result-box {
-        background: rgba(30, 45, 79, 0.9);
-        border: 2px solid var(--gold);
-        border-radius: 16px;
-        padding: 20px;
-        margin-bottom: 20px;
-        min-height: 120px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        text-align: center;
-      }
-
-      .result-box.empty {
-        opacity: 0.5;
-        font-style: italic;
-      }
-
-      .result-success {
-        border-color: var(--success);
-        animation: pulse-success 0.5s;
-      }
-
-      .result-error {
-        border-color: var(--error);
-        animation: pulse-error 0.5s;
-      }
-
-      @keyframes pulse-success {
-        0% {
-          box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.4);
-        }
-        70% {
-          box-shadow: 0 0 0 10px rgba(34, 197, 94, 0);
-        }
-        100% {
-          box-shadow: 0 0 0 0 rgba(34, 197, 94, 0);
-        }
-      }
-
-      @keyframes pulse-error {
-        0% {
-          box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4);
-        }
-        70% {
-          box-shadow: 0 0 0 10px rgba(239, 68, 68, 0);
-        }
-        100% {
-          box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
-        }
-      }
-
-      .guest-name {
-        font-family: "Playfair Display", serif;
-        font-size: 24px;
-        color: var(--gold);
-        margin: 10px 0;
-      }
-
-      .guest-seat {
-        font-size: 14px;
-        opacity: 0.8;
-      }
-
-      .status-badge {
-        display: inline-block;
-        padding: 4px 12px;
-        border-radius: 20px;
-        font-size: 12px;
-        font-weight: 600;
-        margin-top: 10px;
-      }
-
-      .status-valid {
-        background: var(--success);
-        color: white;
-      }
-      .status-invalid {
-        background: var(--error);
-        color: white;
-      }
-      .status-duplicate {
-        background: var(--warning);
-        color: var(--navy-dark);
-      }
-
-      /* Stats */
-      .stats-box {
-        background: rgba(30, 45, 79, 0.9);
-        border: 1px solid rgba(201, 168, 76, 0.3);
-        border-radius: 12px;
-        padding: 15px;
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 10px;
-        text-align: center;
-      }
-
-      .stat-item .value {
-        font-size: 20px;
-        font-weight: 700;
-        color: var(--gold);
-      }
-
-      .stat-item .label {
-        font-size: 10px;
-        opacity: 0.7;
-        text-transform: uppercase;
-      }
-
-      /* Loading */
-      .loading {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 10px;
-        color: var(--gold);
-      }
-
-      .spinner {
-        width: 20px;
-        height: 20px;
-        border: 3px solid rgba(201, 168, 76, 0.3);
-        border-top-color: var(--gold);
-        border-radius: 50%;
-        animation: spin 1s linear infinite;
-      }
-
-      @keyframes spin {
-        to {
-          transform: rotate(360deg);
-        }
-      }
-
-      /* Responsive */
-      @media (max-width: 480px) {
-        .scanner-box,
-        .result-box,
-        .stats-box {
-          padding: 15px;
-        }
-        .header h1 {
-          font-size: 20px;
-        }
-      }
-    </style>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              gold: "#ccbd6d",
+              "gold-light": "#fce38a",
+              "gold-dark": "#a89a4f",
+              navy: "#1b2a4a",
+              "navy-dark": "#0f1a30",
+            },
+            fontFamily: {
+              playfair: ['"Playfair Display"', "serif"],
+              montserrat: ['"Montserrat"', "sans-serif"],
+            },
+            animation: {
+              "pulse-border": "pulseBorder 1.5s ease-in-out infinite",
+            },
+            keyframes: {
+              pulseBorder: {
+                "0%, 100%": {
+                  borderColor: "#ccbd6d",
+                  boxShadow: "0 0 0 9999px rgba(0, 0, 0, 0.8)",
+                },
+                "50%": {
+                  borderColor: "#22c55e",
+                  boxShadow:
+                    "0 0 25px #22c55e, 0 0 0 9999px rgba(0, 0, 0, 0.8)",
+                },
+              },
+            },
+          },
+        },
+      };
+    </script>
   </head>
-  <body>
-    <div class="container">
+  <body class="bg-navy-dark text-white min-h-screen p-4 sm:p-6 font-montserrat">
+    <div class="max-w-2xl mx-auto space-y-6">
       <!-- Header -->
-      <div class="header">
-        <h1>🔍 Scanner Kehadiran</h1>
-        <p>Apple Tree Pre School Kupang — Gala Dinner 2026</p>
+      <div class="text-center py-4 border-b-2 border-gold">
+        <h1 class="font-playfair text-2xl sm:text-3xl text-gold font-bold mb-2">
+          🔍 Scanner Kehadiran
+        </h1>
+        <p class="text-xs sm:text-sm text-white/60 tracking-wide">
+          Apple Tree Pre School Kupang — Gala Dinner 2026
+        </p>
       </div>
 
-      <!-- Stats -->
-      <div class="stats-box" id="stats-box">
-        <div class="stat-item">
-          <div class="value" id="stat-total">-</div>
-          <div class="label">Total Tamu</div>
-        </div>
-        <div class="stat-item">
-          <div class="value" id="stat-checked" style="color: #22c55e">-</div>
-          <div class="label">Sudah Hadir</div>
-        </div>
-        <div class="stat-item">
-          <div class="value" id="stat-remaining">-</div>
-          <div class="label">Menunggu</div>
+      <!-- HTTPS Warning -->
+      <div
+        id="https-warning"
+        class="hidden bg-red-500/20 border-2 border-red-500/50 rounded-xl p-4 text-center"
+      >
+        <div class="text-2xl mb-2">🔒</div>
+        <p class="text-red-300 text-sm font-bold mb-2">
+          ⚠️ Protokol Tidak Aman
+        </p>
+        <p class="text-xs text-white/70 mb-3">
+          Kamera memerlukan protokol <strong>HTTPS</strong> atau
+          <strong>localhost</strong>.<br />
+          Anda membuka file ini secara langsung (<code>file://</code>) yang
+          diblokir browser.
+        </p>
+        <div class="bg-black/30 rounded-lg p-3 text-left text-xs space-y-2">
+          <p class="font-semibold text-gold">Solusi:</p>
+          <ol class="list-decimal list-inside space-y-1 text-white/60">
+            <li>Gunakan <strong>VS Code Live Server</strong> (recommended)</li>
+            <li>Atau upload ke <strong>GitHub Pages / Vercel</strong></li>
+            <li>
+              Atau jalankan via <strong>Python: python -m http.server</strong>
+            </li>
+          </ol>
         </div>
       </div>
 
-      <!-- Scanner -->
-      <div class="scanner-box">
-        <div id="reader"></div>
-        <div class="scanner-controls">
+      <!-- Stats Box -->
+      <div
+        class="grid grid-cols-3 gap-3 bg-[#1e2d4f]/80 border border-gold/30 rounded-xl p-4 text-center backdrop-blur-sm"
+      >
+        <div class="space-y-1">
+          <div class="text-2xl font-bold text-gold" id="stat-total">-</div>
+          <div
+            class="text-[10px] text-white/60 uppercase tracking-wider font-semibold"
+          >
+            Total
+          </div>
+        </div>
+        <div class="space-y-1">
+          <div class="text-2xl font-bold text-green-400" id="stat-checked">
+            -
+          </div>
+          <div
+            class="text-[10px] text-white/60 uppercase tracking-wider font-semibold"
+          >
+            Hadir
+          </div>
+        </div>
+        <div class="space-y-1">
+          <div class="text-2xl font-bold text-blue-400" id="stat-remaining">
+            -
+          </div>
+          <div
+            class="text-[10px] text-white/60 uppercase tracking-wider font-semibold"
+          >
+            Sisa
+          </div>
+        </div>
+      </div>
+
+      <!-- Scanner Wrapper -->
+      <div
+        class="relative bg-black rounded-2xl overflow-hidden border-2 border-gold shadow-2xl"
+      >
+        <div class="relative w-full">
+          <div
+            id="reader"
+            class="w-full min-h-[300px] sm:min-h-[400px] bg-black flex items-center justify-center"
+          >
+            <div class="text-center p-4">
+              <div class="text-4xl mb-3">📷</div>
+              <p class="text-white/60 text-sm animate-pulse">
+                Menyiapkan kamera...
+              </p>
+            </div>
+          </div>
+
+          <!-- Scanner Overlay -->
+          <div
+            id="scanner-overlay"
+            class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 sm:w-72 sm:h-72 border-2 border-gold/50 rounded-2xl pointer-events-none z-20 hidden shadow-[0_0_0_9999px_rgba(0,0,0,0.8)] transition-all duration-300"
+          >
+            <div
+              class="absolute top-2 left-2 w-8 h-8 border-t-4 border-l-4 border-gold-light rounded-tl-lg"
+            ></div>
+            <div
+              class="absolute top-2 right-2 w-8 h-8 border-t-4 border-r-4 border-gold-light rounded-tr-lg"
+            ></div>
+            <div
+              class="absolute bottom-2 left-2 w-8 h-8 border-b-4 border-l-4 border-gold-light rounded-bl-lg"
+            ></div>
+            <div
+              class="absolute bottom-2 right-2 w-8 h-8 border-b-4 border-r-4 border-gold-light rounded-br-lg"
+            ></div>
+          </div>
+        </div>
+
+        <!-- Scanner Controls -->
+        <div class="flex gap-3 p-4 bg-[#1e2d4f]/95 border-t border-gold/20">
           <button
-            class="btn btn-primary"
+            class="flex-1 py-3 px-4 bg-gold text-navy-dark font-bold rounded-lg hover:bg-gold-light transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
             id="btn-start"
             onclick="startScanner()"
           >
-            🎥 Mulai Scan
+            <span>🎥</span> Mulai / Restart
           </button>
           <button
-            class="btn btn-danger"
+            class="flex-1 py-3 px-4 bg-red-500 text-white font-bold rounded-lg hover:bg-red-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
             id="btn-stop"
             onclick="stopScanner()"
             disabled
           >
-            ⏹ Stop
+            <span>⏹</span> Stop
           </button>
         </div>
       </div>
 
-      <!-- Result -->
-      <div class="result-box empty" id="result-box">
-        <span>Scan QR Code undangan tamu untuk validasi kehadiran</span>
+      <!-- Result Box -->
+      <div
+        id="result-box"
+        class="border-2 border-gold/30 bg-[#1e2d4f]/50 rounded-xl p-6 text-center min-h-[120px] flex flex-col items-center justify-center transition-all duration-300"
+      >
+        <span class="text-white/60 italic">
+          Arahkan kamera ke QR Code undangan</span
+        >
       </div>
 
-      <!-- Manual Input (Fallback) -->
-      <div class="scanner-box">
-        <p style="font-size: 12px; margin-bottom: 10px; opacity: 0.7">
-          💡 Tidak bisa scan? Input manual:
-        </p>
-        <div style="display: flex; gap: 10px">
-          <input
-            type="text"
-            id="manual-seat"
-            placeholder="seat (contoh: marthynz)"
-            style="
-              flex: 1;
-              padding: 10px;
-              border: 1px solid var(--gold);
-              border-radius: 6px;
-              background: rgba(255, 255, 255, 0.1);
-              color: #fff;
-            "
-          />
-          <button class="btn btn-primary" onclick="validateManual()">
-            ✓ Cek
-          </button>
+      <!-- Manual Input - MORE PROMINENT -->
+      <div
+        class="bg-gradient-to-br from-gold/20 to-gold/5 border-2 border-gold/50 rounded-xl p-5"
+      >
+        <div class="flex items-center gap-2 mb-3">
+          <span class="text-2xl">⌨️</span>
+          <div>
+            <p class="text-gold font-bold text-sm">Input Manual (Alternatif)</p>
+            <p class="text-xs text-white/60">
+              Gunakan ini jika kamera tidak berfungsi
+            </p>
+          </div>
         </div>
+        <div class="space-y-3">
+          <div class="flex flex-col sm:flex-row gap-3">
+            <input
+              type="text"
+              id="manual-seat"
+              placeholder="Seat (contoh: marthynz)"
+              class="flex-1 px-4 py-3 bg-white/10 border border-gold/50 rounded-lg text-white placeholder-white/40 focus:outline-none focus:border-gold-light focus:ring-2 focus:ring-gold-light/50 text-sm transition-all"
+            />
+            <input
+              type="text"
+              id="manual-token"
+              placeholder="Token"
+              class="flex-[0.8] px-4 py-3 bg-white/10 border border-gold/50 rounded-lg text-white placeholder-white/40 focus:outline-none focus:border-gold-light focus:ring-2 focus:ring-gold-light/50 text-sm transition-all"
+            />
+            <button
+              class="px-6 py-3 bg-gold text-navy-dark font-bold rounded-lg hover:bg-gold-light hover:scale-105 transition-all text-sm whitespace-nowrap shadow-lg"
+              onclick="validateManual()"
+            >
+              ✓ Cek
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Debug Info -->
+      <div class="bg-[#1e2d4f]/80 border border-gold/20 rounded-xl p-4">
+        <details class="group">
+          <summary
+            class="cursor-pointer text-gold font-semibold text-sm flex items-center gap-2 hover:text-gold-light transition-colors"
+          >
+            <span class="group-open:rotate-90 transition-transform">▶</span> 🔧
+            Debug Log
+          </summary>
+          <div
+            class="mt-3 bg-black/60 rounded-lg p-3 font-mono text-[11px] max-h-48 overflow-y-auto space-y-1"
+            id="debug-info"
+          >
+            <div class="text-blue-400">[System initialized]</div>
+          </div>
+        </details>
+      </div>
+
+      <!-- Help Section -->
+      <div
+        class="bg-blue-500/10 border border-blue-500/30 rounded-xl p-4 text-sm"
+      >
+        <h3 class="font-bold text-blue-400 mb-2 flex items-center gap-2">
+          <span>💡</span> Cara Menggunakan Scanner:
+        </h3>
+        <ol class="list-decimal list-inside space-y-1 text-white/70 text-xs">
+          <li>
+            Pastikan membuka via <strong>HTTPS</strong> atau
+            <strong>localhost</strong>
+          </li>
+          <li>Beri izin akses kamera saat diminta browser</li>
+          <li>Arahkan kamera ke QR Code pada undangan</li>
+          <li>Scanner akan otomatis membaca dan validasi</li>
+          <li>Lihat hasil di kotak bawah scanner</li>
+        </ol>
       </div>
     </div>
 
     <script>
-      // ⚠️ Ganti dengan Web App URL Google Apps Script Anda
-      const API_URL = "https://script.google.com/macros/s/.../exec";
+      const API_URL =
+        "https://script.google.com/macros/s/AKfycbw703PW01pw0ZjQbYKz7z0nZdMKkWquiPhMsoHD9k1HWnk2xTJls35t54pn9LX1iGfJvA/exec";
+      const CONFIG = {
+        inviteBaseUrl: "https://marthynz.github.io/e-invitation",
+      };
 
       let html5QrCode = null;
       let isScanning = false;
+      let scanPaused = false;
+      let debugLines = [];
+      let cameraPermissionDenied = false;
 
-      // Initialize stats on load
-      document.addEventListener("DOMContentLoaded", function () {
-        loadStats();
-        // Auto-start scanner jika device mendukung
-        // startScanner();
+      function addDebug(message, type = "info") {
+        const time = new Date().toLocaleTimeString();
+        debugLines.unshift({ time, message, type });
+        if (debugLines.length > 20) debugLines.pop();
+        updateDebugDisplay();
+        console.log(`[${type.toUpperCase()}]`, message);
+      }
+
+      function updateDebugDisplay() {
+        const debugDiv = document.getElementById("debug-info");
+        if (!debugDiv) return;
+        const colorMap = {
+          info: "text-blue-400",
+          success: "text-green-400",
+          error: "text-red-400",
+          warning: "text-yellow-400",
+        };
+        debugDiv.innerHTML = debugLines
+          .map(
+            (line) =>
+              `<div class="${colorMap[line.type] || "text-white/60"}">[${line.time}] ${line.message}</div>`,
+          )
+          .join("");
+      }
+
+      // Check protocol on load
+      function checkProtocol() {
+        const protocol = window.location.protocol;
+        const hostname = window.location.hostname;
+        const isSecure =
+          protocol === "https:" ||
+          hostname === "localhost" ||
+          hostname === "127.0.0.1";
+
+        if (!isSecure) {
+          document.getElementById("https-warning").classList.remove("hidden");
+          addDebug(
+            `⚠️ Protokol tidak aman: ${protocol}. Kamera akan diblokir.`,
+            "error",
+          );
+          return false;
+        }
+        return true;
+      }
+
+      document.addEventListener("DOMContentLoaded", async function () {
+        const isSecure = checkProtocol();
+        addDebug("Scanner initialized", "info");
+        await loadStats();
+
+        // Only auto-start if secure protocol
+        if (isSecure) {
+          setTimeout(() => {
+            startScanner();
+          }, 1000);
+        } else {
+          addDebug(
+            "Auto-start dibatalkan karena protokol tidak aman",
+            "warning",
+          );
+          showResult(
+            "⚠️ Buka via HTTPS/localhost untuk menggunakan kamera.<br><br>Gunakan input manual di bawah atau perbaiki protokol.",
+            "warning",
+          );
+        }
       });
 
-      // Start QR Scanner
       async function startScanner() {
-        if (isScanning) return;
+        if (isScanning) {
+          addDebug("Scanner sudah berjalan.", "info");
+          return;
+        }
+
+        // Re-check protocol
+        if (!checkProtocol()) {
+          alert(
+            "Kamera hanya berfungsi via HTTPS atau localhost!\n\nGunakan input manual atau jalankan via server lokal.",
+          );
+          return;
+        }
+
+        addDebug("Meminta akses kamera...", "info");
+        showResult(" Meminta izin akses kamera...", "loading");
 
         try {
+          // Test camera permission first
+          const stream = await navigator.mediaDevices
+            .getUserMedia({ video: true })
+            .catch((err) => {
+              addDebug(
+                `Camera permission error: ${err.name} - ${err.message}`,
+                "error",
+              );
+              throw err;
+            });
+
+          // Stop the test stream
+          stream.getTracks().forEach((track) => track.stop());
+          addDebug("Camera permission granted!", "success");
+
+          // Create scanner
           html5QrCode = new Html5Qrcode("reader");
 
+          // Get available cameras
+          let cameras = [];
+          try {
+            cameras = await Html5Qrcode.getCameras();
+            addDebug(`Ditemukan ${cameras.length} kamera`, "info");
+
+            if (cameras.length === 0) {
+              throw new Error(
+                "Tidak ada kamera yang terdeteksi di perangkat ini.",
+              );
+            }
+
+            cameras.forEach((cam, idx) => {
+              addDebug(`Kamera ${idx + 1}: ${cam.label || "Unnamed"}`, "info");
+            });
+          } catch (camErr) {
+            addDebug(
+              `Gagal mendapatkan daftar kamera: ${camErr.message}`,
+              "warning",
+            );
+            // Continue anyway, will use default
+          }
+
+          // Select preferred camera
+          const preferredCamera =
+            cameras.find(
+              (c) =>
+                c.label.toLowerCase().includes("back") ||
+                c.label.toLowerCase().includes("belakang") ||
+                c.label.toLowerCase().includes("rear"),
+            ) || cameras[0];
+
+          const cameraId = preferredCamera
+            ? preferredCamera.id
+            : { facingMode: "environment" };
+          addDebug(
+            `Menggunakan kamera: ${preferredCamera ? preferredCamera.label : "Default"}`,
+            "success",
+          );
+
           await html5QrCode.start(
-            { facingMode: "environment" }, // Use back camera
+            cameraId,
             {
               fps: 10,
               qrbox: { width: 250, height: 250 },
+              aspectRatio: 1.0,
+              disableFlip: false,
             },
             onScanSuccess,
             onScanFailure,
@@ -375,17 +437,48 @@
           isScanning = true;
           document.getElementById("btn-start").disabled = true;
           document.getElementById("btn-stop").disabled = false;
-          showResult("🎯 Memindai QR Code...", "loading");
+
+          const overlay = document.getElementById("scanner-overlay");
+          if (overlay) {
+            overlay.style.display = "block";
+            overlay.classList.add("animate-pulse-border");
+          }
+
+          showResult("📷 Scanner aktif. Arahkan ke QR Code...", "empty");
+          addDebug("✅ Scanner berhasil dimulai", "success");
         } catch (err) {
-          console.error("Scanner error:", err);
-          showResult(
-            "❌ Gagal mengakses kamera. Pastikan izin kamera diaktifkan.",
-            "error",
-          );
+          cameraPermissionDenied = true;
+          let errorMsg = err.message || "Unknown error";
+          let userMsg = "";
+
+          if (
+            err.name === "NotAllowedError" ||
+            err.name === "PermissionDeniedError"
+          ) {
+            userMsg =
+              "❌ <strong>Izin Kamera Ditolak</strong><br><br>Anda menolak akses kamera. Cara memperbaiki:<ol class='list-decimal list-inside mt-2 text-xs space-y-1'><li>Klik icon gembok/gembok di address bar</li><li>Pilih 'Site Settings'</li><li>Ubah Camera menjadi 'Allow'</li><li>Refresh halaman</li></ol>";
+            addDebug(`Permission denied: ${err.name}`, "error");
+          } else if (
+            err.name === "NotFoundError" ||
+            err.name === "DevicesNotFoundError"
+          ) {
+            userMsg =
+              "❌ <strong>Kamera Tidak Ditemukan</strong><br><br>Pastikan perangkat memiliki kamera dan tersambung dengan benar.";
+            addDebug(`No camera found: ${err.name}`, "error");
+          } else if (err.name === "NotSupportedError") {
+            userMsg =
+              " <strong>Kamera Tidak Didukung</strong><br><br>Browser atau perangkat tidak mendukung akses kamera via web.";
+            addDebug(`Not supported: ${err.name}`, "error");
+          } else {
+            userMsg = `❌ <strong>Gagal Mengakses Kamera</strong><br><br>Error: ${errorMsg}<br><br><strong>Solusi:</strong><ul class='list-disc list-inside mt-2 text-xs space-y-1'><li>Pastikan menggunakan HTTPS/localhost</li><li>Beri izin kamera saat diminta</li><li>Gunakan input manual di bawah</li></ul>`;
+            addDebug(`Camera error: ${err.name} - ${errorMsg}`, "error");
+          }
+
+          showResult(userMsg, "error");
+          document.getElementById("btn-start").disabled = false;
         }
       }
 
-      // Stop QR Scanner
       function stopScanner() {
         if (html5QrCode && isScanning) {
           html5QrCode
@@ -394,186 +487,217 @@
               isScanning = false;
               document.getElementById("btn-start").disabled = false;
               document.getElementById("btn-stop").disabled = true;
-              html5QrCode.clear();
+
+              const overlay = document.getElementById("scanner-overlay");
+              if (overlay) {
+                overlay.style.display = "none";
+                overlay.classList.remove("animate-pulse-border");
+              }
+              addDebug("Scanner dihentikan.", "info");
+              showResult(
+                "⏸ Scanner dihentikan. Klik 'Mulai' untuk melanjutkan.",
+                "empty",
+              );
             })
-            .catch((err) => console.error("Stop error:", err));
+            .catch((err) => {
+              addDebug("Error stopping scanner: " + err.message, "error");
+            });
         }
       }
 
-      // Handle successful scan
-      async function onScanSuccess(decodedText) {
-        // Pause scanning temporarily
-        if (html5QrCode) html5QrCode.pause();
+      async function onScanSuccess(decodedText, decodedResult) {
+        if (scanPaused) return;
+        addDebug("✅ QR Terdeteksi!", "success");
+
+        const overlay = document.getElementById("scanner-overlay");
+        if (overlay) {
+          overlay.classList.remove("animate-pulse-border");
+          overlay.style.borderColor = "#22c55e";
+          overlay.style.boxShadow =
+            "0 0 25px #22c55e, 0 0 0 9999px rgba(0, 0, 0, 0.8)";
+        }
+
+        scanPaused = true;
+        if (html5QrCode) {
+          try {
+            await html5QrCode.pause();
+          } catch (e) {}
+        }
 
         showResult(
-          '<div class="loading"><div class="spinner"></div> Memvalidasi...</div>',
+          '<div class="flex items-center gap-3 text-gold"><div class="w-6 h-6 border-2 border-gold border-t-transparent rounded-full animate-spin"></div> Memvalidasi data...</div>',
           "loading",
         );
 
         try {
-          // Parse QR data (expecting JSON string)
-          let qrData;
-          try {
-            qrData = JSON.parse(decodedText);
-          } catch (e) {
-            // Fallback: if QR contains plain URL
-            const url = new URL(
-              decodedText.includes("http")
-                ? decodedText
-                : CONFIG.inviteBaseUrl + decodedText,
-            );
-            qrData = {
-              seat: url.searchParams.get("seat"),
-              token: url.searchParams.get("token"),
-            };
-          }
+          const qrData = parseQRData(decodedText);
+          if (!qrData.seat || !qrData.token)
+            throw new Error("Format QR tidak valid (missing seat/token)");
 
-          if (!qrData.seat || !qrData.token) {
-            throw new Error("Invalid QR format");
-          }
+          const url = `${API_URL}?action=confirm&seat=${encodeURIComponent(qrData.seat)}&token=${encodeURIComponent(qrData.token)}`;
+          addDebug(`Sending to API: seat=${qrData.seat}`, "info");
 
-          // Call validation API
-          const response = await fetch(
-            `${API_URL}?action=validate&seat=${encodeURIComponent(qrData.seat)}&token=${encodeURIComponent(qrData.token)}&origin=${window.location.origin}`,
-            {
-              method: "GET",
-              headers: { "Content-Type": "application/json" },
-            },
-          );
-
+          const response = await fetch(url);
           const result = await response.json();
+          addDebug(
+            `API Response: ${JSON.stringify(result)}`,
+            result.success ? "success" : "error",
+          );
 
           if (result.success) {
+            const guestName = result.guest?.name || "Tamu";
+            const status = result.duplicate
+              ? "Sudah Check-in Sebelumnya"
+              : "✅ Check-in Berhasil!";
+            const statusClass = result.duplicate ? "warning" : "success";
+
             showResult(
-              `
-            <div style="color:#22c55e; font-size:40px; margin-bottom:10px">✅</div>
-            <div class="guest-name">${result.guest.name}</div>
-            <div class="guest-seat">Seat: ${result.guest.seat}</div>
-            <span class="status-badge status-valid">✓ Kehadiran Dikonfirmasi</span>
-            <div style="margin-top:10px; font-size:12px; opacity:0.7">
-              🕐 ${new Date().toLocaleTimeString("id-ID")}
-            </div>
-          `,
-              "success",
+              `<div class="text-5xl mb-3">${result.duplicate ? "⚠️" : "✅"}</div>
+               <div class="text-xl font-bold text-white mb-1">${guestName}</div>
+               <div class="text-sm text-white/70 mb-3">Seat: ${qrData.seat}</div>
+               <span class="inline-block px-4 py-2 ${result.duplicate ? "bg-yellow-500/20 text-yellow-400 border border-yellow-500/50" : "bg-green-500/20 text-green-400 border border-green-500/50"} rounded-full text-xs font-bold uppercase tracking-wider">
+                 ${status}
+               </span>`,
+              statusClass,
             );
 
-            // Play success sound (optional)
-            playSound("success");
-
-            // Refresh stats
-            loadStats();
-          } else if (result.message === "Already checked in") {
-            showResult(
-              `
-            <div style="color:#f59e0b; font-size:40px; margin-bottom:10px">⚠️</div>
-            <div class="guest-name">${result.guest.name}</div>
-            <div class="guest-seat">Seat: ${result.guest.seat}</div>
-            <span class="status-badge status-duplicate">Sudah Check-in</span>
-            <div style="margin-top:10px; font-size:11px; opacity:0.7">
-              🕐 ${result.guest.checkedAt ? new Date(result.guest.checkedAt).toLocaleString("id-ID") : "-"}
-            </div>
-          `,
-              "warning",
-            );
-
-            playSound("warning");
+            if (!result.duplicate) await loadStats();
           } else {
             showResult(
-              `
-            <div style="color:#ef4444; font-size:40px; margin-bottom:10px">❌</div>
-            <div style="font-weight:600; margin:10px 0">Tidak Valid</div>
-            <span class="status-badge status-invalid">${result.message}</span>
-            <div style="margin-top:10px; font-size:11px; opacity:0.7">
-              Seat: ${qrData.seat}
-            </div>
-          `,
+              `❌ <span class="text-white">${result.message}</span>`,
               "error",
             );
-
-            playSound("error");
           }
         } catch (error) {
-          console.error("Validation error:", error);
-          showResult(
-            `
-          <div style="color:#ef4444; font-size:40px">❌</div>
-          <div style="margin:10px 0">Gagal validasi</div>
-          <span class="status-badge status-invalid">Cek koneksi internet</span>
-        `,
-            "error",
-          );
+          addDebug("Validation error: " + error.message, "error");
+          showResult(`❌ Error: ${error.message}`, "error");
         }
 
-        // Resume scanning after 3 seconds
         setTimeout(() => {
+          scanPaused = false;
           if (html5QrCode && isScanning) {
-            html5QrCode.resume();
+            html5QrCode
+              .resume()
+              .then(() => {
+                addDebug("Scanner dilanjutkan.", "info");
+                const overlay = document.getElementById("scanner-overlay");
+                if (overlay) {
+                  overlay.style.borderColor = "";
+                  overlay.style.boxShadow = "";
+                  overlay.classList.add("animate-pulse-border");
+                }
+              })
+              .catch(() => {});
           }
-        }, 3000);
+        }, 4000);
       }
 
-      // Handle scan failure
-      function onScanFailure(message) {
-        // Don't show every failure to avoid spam
-        // console.warn('Scan failure:', message);
+      function parseQRData(text) {
+        addDebug(`Parsing QR: ${text.substring(0, 50)}...`, "info");
+
+        try {
+          const json = JSON.parse(text);
+          addDebug("Format: JSON", "info");
+          return { seat: json.seat, token: json.token, isJson: true };
+        } catch (e) {}
+
+        let urlStr = text;
+        if (!urlStr.startsWith("http"))
+          urlStr = CONFIG.inviteBaseUrl + "?" + urlStr;
+
+        try {
+          const url = new URL(urlStr);
+          const seat = url.searchParams.get("seat");
+          const token = url.searchParams.get("token");
+          addDebug(
+            `Format: URL | Seat: ${seat}, Token: ${token ? token.substring(0, 4) + "..." : "none"}`,
+            "info",
+          );
+          return { seat: seat, token: token, isJson: false };
+        } catch (e) {
+          addDebug("Parse failed: " + e.message, "error");
+          return { raw: text, error: e.message };
+        }
       }
 
-      // Manual validation fallback
+      function onScanFailure(error) {
+        // Silent
+      }
+
       async function validateManual() {
         const seat = document.getElementById("manual-seat").value.trim();
-        if (!seat) {
-          showResult("⚠️ Masukkan seat terlebih dahulu", "error");
+        const token = document.getElementById("manual-token").value.trim();
+
+        if (!seat || !token) {
+          alert(
+            "⚠️ Harap isi Seat dan Token!\n\nContoh:\nSeat: marthynz\nToken: abc123xyz",
+          );
           return;
         }
 
-        // For manual input, we need token - in production, staff should have a lookup table
-        // This is just a demo - in real use, manual validation should require additional auth
-        const token = prompt("Masukkan token untuk " + seat + ":");
-        if (!token) return;
-
+        addDebug(
+          `Manual input: seat=${seat}, token=${token.substring(0, 4)}...`,
+          "info",
+        );
         showResult(
-          '<div class="loading"><div class="spinner"></div> Memvalidasi...</div>',
+          '<div class="flex items-center gap-3 text-gold"><div class="w-6 h-6 border-2 border-gold border-t-transparent rounded-full animate-spin"></div> Memeriksa...</div>',
           "loading",
         );
 
         try {
-          const response = await fetch(
-            `${API_URL}?action=validate&seat=${encodeURIComponent(seat)}&token=${encodeURIComponent(token)}&origin=${window.location.origin}`,
-          );
+          const url = `${API_URL}?action=confirm&seat=${encodeURIComponent(seat)}&token=${encodeURIComponent(token)}`;
+          const response = await fetch(url);
           const result = await response.json();
+          addDebug(
+            `Manual API response: ${JSON.stringify(result)}`,
+            result.success ? "success" : "error",
+          );
 
           if (result.success) {
+            const guestName = result.guest?.name || seat;
             showResult(
-              `✅ ${result.guest.name} (${seat}) - Kehadiran Dikonfirmasi`,
+              `<div class="text-4xl mb-2">✅</div>
+               <div class="text-lg font-bold text-white mb-1">Check-in Berhasil!</div>
+               <div class="text-xl text-gold font-bold mt-2">${guestName}</div>
+               <div class="text-sm text-white/70 mt-1">Seat: ${seat}</div>`,
               "success",
             );
-            loadStats();
+            await loadStats();
           } else {
-            showResult(`❌ ${result.message}`, "error");
+            showResult(
+              `❌ <span class="text-white">${result.message}</span>`,
+              "error",
+            );
           }
         } catch (e) {
-          showResult("❌ Gagal terhubung ke server", "error");
+          addDebug("Manual validation error: " + e.message, "error");
+          showResult(
+            "❌ Gagal terhubung ke server.<br><small class='text-white/60'>Periksa koneksi internet Anda.</small>",
+            "error",
+          );
         }
       }
 
-      // Display result in UI
       function showResult(html, type) {
         const box = document.getElementById("result-box");
-        box.className = "result-box";
-        if (type === "success") box.classList.add("result-success");
-        if (type === "error") box.classList.add("result-error");
-        if (type === "loading" || type === "empty") box.classList.add("empty");
+        box.className =
+          "border-2 rounded-xl p-6 text-center min-h-[120px] flex flex-col items-center justify-center transition-all duration-300";
+        if (type === "success")
+          box.classList.add("border-green-500", "bg-green-500/10");
+        else if (type === "error")
+          box.classList.add("border-red-500", "bg-red-500/10");
+        else if (type === "warning")
+          box.classList.add("border-yellow-500", "bg-yellow-500/10");
+        else if (type === "loading")
+          box.classList.add("border-gold", "bg-gold/10");
+        else box.classList.add("border-gold/30", "bg-[#1e2d4f]/50");
         box.innerHTML = html;
       }
 
-      // Load attendance stats
       async function loadStats() {
         try {
-          const response = await fetch(
-            `${API_URL}?action=stats&origin=${window.location.origin}`,
-          );
+          const response = await fetch(API_URL + "?action=stats");
           const data = await response.json();
-
           if (data.success && data.stats) {
             document.getElementById("stat-total").textContent =
               data.stats.total;
@@ -581,21 +705,17 @@
               data.stats.checkedIn;
             document.getElementById("stat-remaining").textContent =
               data.stats.remaining;
+            addDebug(
+              `Stats loaded: Total=${data.stats.total}, Checked=${data.stats.checkedIn}`,
+              "info",
+            );
           }
         } catch (e) {
-          console.warn("Failed to load stats:", e);
+          addDebug("Failed to load stats: " + e.message, "error");
         }
       }
 
-      // Simple sound feedback (optional)
-      function playSound(type) {
-        // Requires user interaction first due to browser policies
-        // You can add actual audio files here if needed
-        console.log(`🔊 Sound: ${type}`);
-      }
-
-      // Cleanup on page unload
-      window.addEventListener("beforeunload", function () {
+      window.addEventListener("beforeunload", () => {
         if (html5QrCode && isScanning) {
           html5QrCode.stop();
         }

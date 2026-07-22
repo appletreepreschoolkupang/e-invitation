@@ -14,615 +14,421 @@
     <!-- QR Code Library (CDN) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
-    <!-- Inline CSS -->
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Tailwind Configuration -->
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              gold: "#ccbd6d",
+              "gold-light": "#fce38a",
+              "gold-dark": "#a89a4f",
+              navy: "#a52a2a",
+              "navy-dark": "#630404",
+              cream: "#fff8e7",
+            },
+            fontFamily: {
+              playfair: ['"Playfair Display"', "serif"],
+              montserrat: ['"Montserrat"', "sans-serif"],
+              greatvibes: ['"Great Vibes"', "cursive"],
+            },
+            animation: {
+              shimmer: "shimmer 3s ease-in-out infinite",
+              "pulse-slow": "pulse 1.5s infinite",
+              "fade-in": "fadeIn 1s ease-out",
+              "spin-slow": "spin 1s linear infinite",
+              "scale-in": "scaleIn 0.5s ease",
+            },
+            keyframes: {
+              shimmer: {
+                "0%, 100%": { opacity: "0.5" },
+                "50%": { opacity: "1" },
+              },
+              fadeIn: {
+                from: { opacity: "0", transform: "translateY(20px)" },
+                to: { opacity: "1", transform: "translateY(0)" },
+              },
+              scaleIn: {
+                from: { transform: "scale(0)" },
+                to: { transform: "scale(1)" },
+              },
+            },
+          },
+        },
+      };
+    </script>
+
+    <!-- Custom CSS untuk efek background bintang -->
     <style>
-      :root {
-        --gold: #c9a84c;
-        --gold-light: #e8d48b;
-        --gold-dark: #a67c2e;
-        --navy: #1b2a4a;
-        --navy-dark: #0f1a30;
-        --cream: #fff8e7;
-        --white: #ffffff;
-      }
-
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-      }
-
-      body {
-        background-color: var(--navy-dark);
-        font-family: "Montserrat", sans-serif;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        min-height: 100vh;
-        padding: 20px;
-        background-image: radial-gradient(
-          ellipse at top,
-          rgba(27, 42, 74, 0.8) 0%,
-          var(--navy-dark) 70%
-        );
-      }
-
-      body::before {
-        content: "";
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
+      .bg-stars {
         background-image:
-          radial-gradient(2px 2px at 20% 30%, var(--gold-light), transparent),
-          radial-gradient(2px 2px at 40% 70%, var(--gold), transparent),
-          radial-gradient(1px 1px at 60% 20%, var(--gold-light), transparent),
-          radial-gradient(2px 2px at 80% 60%, var(--gold), transparent),
-          radial-gradient(1px 1px at 10% 80%, var(--gold-light), transparent),
-          radial-gradient(2px 2px at 70% 40%, var(--gold), transparent),
-          radial-gradient(1px 1px at 50% 90%, var(--gold-light), transparent),
-          radial-gradient(2px 2px at 30% 50%, var(--gold), transparent),
-          radial-gradient(1px 1px at 90% 10%, var(--gold-light), transparent),
-          radial-gradient(2px 2px at 15% 55%, var(--gold), transparent);
+          radial-gradient(2px 2px at 20% 30%, #fce38a, transparent),
+          radial-gradient(2px 2px at 40% 70%, #ccbd6d, transparent),
+          radial-gradient(1px 1px at 60% 20%, #fce38a, transparent),
+          radial-gradient(2px 2px at 80% 60%, #ccbd6d, transparent),
+          radial-gradient(1px 1px at 10% 80%, #fce38a, transparent),
+          radial-gradient(2px 2px at 70% 40%, #ccbd6d, transparent),
+          radial-gradient(1px 1px at 50% 90%, #fce38a, transparent),
+          radial-gradient(2px 2px at 30% 50%, #ccbd6d, transparent),
+          radial-gradient(1px 1px at 90% 10%, #fce38a, transparent),
+          radial-gradient(2px 2px at 15% 55%, #ccbd6d, transparent);
         opacity: 0.4;
         pointer-events: none;
-        z-index: 0;
-      }
-
-      .invitation-card {
-        position: relative;
-        z-index: 1;
-        width: 100%;
-        max-width: 600px;
-        background: linear-gradient(
-          165deg,
-          #1e2d4f 0%,
-          #162240 40%,
-          #1b2a4a 100%
-        );
-        border: 2px solid var(--gold);
-        border-radius: 16px;
-        padding: 0;
-        overflow: hidden;
-        box-shadow:
-          0 0 40px rgba(201, 168, 76, 0.15),
-          0 25px 60px rgba(0, 0, 0, 0.5),
-          inset 0 1px 0 rgba(201, 168, 76, 0.2);
-      }
-
-      .invitation-card::before {
-        content: "";
-        position: absolute;
-        top: 8px;
-        left: 8px;
-        right: 8px;
-        bottom: 8px;
-        border: 1px solid rgba(201, 168, 76, 0.35);
-        border-radius: 10px;
-        pointer-events: none;
-        z-index: 2;
-      }
-
-      .header {
-        position: relative;
-        text-align: center;
-        padding: 45px 40px 35px;
-        background: linear-gradient(
-          180deg,
-          rgba(201, 168, 76, 0.08) 0%,
-          transparent 100%
-        );
-      }
-
-      .header::after {
-        content: "";
-        position: absolute;
-        bottom: 0;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 60%;
-        height: 1px;
-        background: linear-gradient(
-          90deg,
-          transparent,
-          var(--gold),
-          transparent
-        );
-      }
-
-      .corner-decoration {
-        position: absolute;
-        width: 60px;
-        height: 60px;
-        opacity: 0.4;
-      }
-
-      .corner-decoration.top-left {
-        top: 15px;
-        left: 15px;
-        border-top: 2px solid var(--gold);
-        border-left: 2px solid var(--gold);
-        border-radius: 4px 0 0 0;
-      }
-
-      .corner-decoration.top-right {
-        top: 15px;
-        right: 15px;
-        border-top: 2px solid var(--gold);
-        border-right: 2px solid var(--gold);
-        border-radius: 0 4px 0 0;
-      }
-
-      .corner-decoration.bottom-left {
-        bottom: 15px;
-        left: 15px;
-        border-bottom: 2px solid var(--gold);
-        border-left: 2px solid var(--gold);
-        border-radius: 0 0 0 4px;
-      }
-
-      .corner-decoration.bottom-right {
-        bottom: 15px;
-        right: 15px;
-        border-bottom: 2px solid var(--gold);
-        border-right: 2px solid var(--gold);
-        border-radius: 0 0 4px 0;
-      }
-
-      .logo-area {
-        margin-bottom: 20px;
-      }
-
-      .logo-circle {
-        width: 120px;
-        height: 120px;
-        margin: 0 auto 15px;
-        border: 2px solid var(--gold);
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background: rgba(201, 168, 76, 0.08);
-        position: relative;
-      }
-
-      .logo-circle::before {
-        content: "";
-        position: absolute;
-        top: 4px;
-        left: 4px;
-        right: 4px;
-        bottom: 4px;
-        border: 1px solid rgba(201, 168, 76, 0.3);
-        border-radius: 50%;
-      }
-
-      .logo-circle img {
-        width: 70%;
-        height: 70%;
-        object-fit: contain;
-        border-radius: 4px;
-      }
-
-      .school-name {
-        font-family: "Playfair Display", serif;
-        font-size: 16px;
-        font-weight: 600;
-        color: var(--gold-light);
-        letter-spacing: 3px;
-        text-transform: uppercase;
-        margin-bottom: 5px;
-      }
-
-      .content {
-        text-align: center;
-        padding: 35px 40px;
-      }
-
-      .invitation-text-top {
-        font-family: "Montserrat", sans-serif;
-        font-size: 11px;
-        color: rgba(232, 212, 139, 0.7);
-        letter-spacing: 4px;
-        text-transform: uppercase;
-        font-weight: 400;
-        margin-bottom: 8px;
-      }
-
-      .you-are-invited {
-        font-family: "Great Vibes", cursive;
-        font-size: 42px;
-        color: var(--gold);
-        margin-bottom: 25px;
-        line-height: 1.2;
-        text-shadow: 0 0 30px rgba(201, 168, 76, 0.3);
-      }
-
-      .event-title {
-        font-family: "Playfair Display", serif;
-        font-size: 32px;
-        font-weight: 700;
-        color: var(--white);
-        margin-bottom: 8px;
-        letter-spacing: 2px;
-      }
-
-      .event-title span {
-        color: var(--gold);
-      }
-
-      .divider {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 15px;
-        margin: 25px 0;
-      }
-
-      .divider-line {
-        width: 80px;
-        height: 1px;
-        background: linear-gradient(
-          90deg,
-          transparent,
-          var(--gold),
-          transparent
-        );
-      }
-
-      .divider-diamond {
-        width: 8px;
-        height: 8px;
-        background: var(--gold);
-        transform: rotate(45deg);
-        opacity: 0.7;
-        animation: shimmer 3s ease-in-out infinite;
-      }
-
-      @keyframes shimmer {
-        0%,
-        100% {
-          opacity: 0.5;
-        }
-        50% {
-          opacity: 1;
-        }
-      }
-
-      .details-section {
-        display: flex;
-        justify-content: center;
-        gap: 40px;
-        margin: 30px 0;
-        flex-wrap: wrap;
-      }
-
-      .detail-item {
-        text-align: center;
-        flex: 1;
-        min-width: 140px;
-      }
-
-      .detail-icon {
-        font-size: 24px;
-        margin-bottom: 10px;
-        display: block;
-      }
-
-      .detail-label {
-        font-size: 9px;
-        color: var(--gold);
-        letter-spacing: 3px;
-        text-transform: uppercase;
-        font-weight: 500;
-        margin-bottom: 8px;
-      }
-
-      .detail-value {
-        font-family: "Playfair Display", serif;
-        font-size: 18px;
-        color: var(--white);
-        font-weight: 600;
-        line-height: 1.4;
-      }
-
-      .detail-sub {
-        font-size: 12px;
-        color: rgba(255, 255, 255, 0.5);
-        margin-top: 4px;
-        font-weight: 300;
-      }
-
-      .message {
-        font-size: 13px;
-        color: rgba(255, 255, 255, 0.6);
-        line-height: 1.8;
-        margin: 25px 10px;
-        font-weight: 300;
-        font-style: italic;
-      }
-
-      .qr-section {
-        text-align: center;
-        padding: 25px 40px 15px;
-      }
-
-      .qr-label {
-        font-size: 9px;
-        color: rgba(232, 212, 139, 0.6);
-        letter-spacing: 3px;
-        text-transform: uppercase;
-        margin-bottom: 15px;
-        font-weight: 400;
-      }
-
-      .qr-box {
-        width: 160px;
-        height: 160px;
-        margin: 0 auto;
-        border: 2px solid rgba(201, 168, 76, 0.4);
-        border-radius: 12px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        background: rgba(255, 248, 231, 0.03);
-        position: relative;
-        overflow: hidden;
-      }
-
-      .qr-box::before {
-        content: "";
-        position: absolute;
-        top: 4px;
-        left: 4px;
-        right: 4px;
-        bottom: 4px;
-        border: 1px dashed rgba(201, 168, 76, 0.2);
-        border-radius: 8px;
-      }
-
-      /* Container untuk QR Code dinamis */
-      #qrcode {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 100%;
-        height: 100%;
-        padding: 8px;
-      }
-
-      #qrcode img,
-      #qrcode canvas {
-        max-width: 100%;
-        max-height: 100%;
-        border-radius: 4px;
-      }
-
-      .qr-loading {
-        font-size: 10px;
-        color: var(--gold);
-        animation: pulse 1.5s infinite;
-      }
-
-      @keyframes pulse {
-        0%,
-        100% {
-          opacity: 0.5;
-        }
-        50% {
-          opacity: 1;
-        }
-      }
-
-      .footer {
-        text-align: center;
-        padding: 20px 40px 40px;
-        position: relative;
-      }
-
-      .footer::before {
-        content: "";
-        position: absolute;
-        top: 0;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 40%;
-        height: 1px;
-        background: linear-gradient(
-          90deg,
-          transparent,
-          rgba(201, 168, 76, 0.3),
-          transparent
-        );
-      }
-
-      .rsvp-text {
-        font-family: "Playfair Display", serif;
-        font-size: 14px;
-        color: var(--gold-light);
-        margin-bottom: 5px;
-        font-weight: 600;
-        letter-spacing: 1px;
-      }
-
-      .footer-message {
-        font-size: 11px;
-        color: rgba(255, 255, 255, 0.4);
-        font-weight: 300;
-        letter-spacing: 1px;
-      }
-
-      @keyframes fadeIn {
-        from {
-          opacity: 0;
-          transform: translateY(20px);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
-
-      .invitation-card {
-        animation: fadeIn 1s ease-out;
-      }
-
-      @media (max-width: 480px) {
-        .header {
-          padding: 35px 25px 25px;
-        }
-        .content {
-          padding: 25px 25px;
-        }
-        .qr-section {
-          padding: 20px 25px 10px;
-        }
-        .footer {
-          padding: 15px 25px 30px;
-        }
-        .you-are-invited {
-          font-size: 34px;
-        }
-        .event-title {
-          font-size: 26px;
-        }
-        .details-section {
-          gap: 20px;
-        }
-        .detail-value {
-          font-size: 16px;
-        }
-        .corner-decoration {
-          width: 40px;
-          height: 40px;
-        }
-        .qr-box {
-          width: 140px;
-          height: 140px;
-        }
       }
     </style>
   </head>
-  <body>
-    <div class="invitation-card">
+  <body
+    class="bg-navy-dark font-montserrat flex justify-center items-center min-h-screen p-5 relative overflow-x-hidden"
+  >
+    <!-- Background Stars Overlay -->
+    <div class="bg-stars fixed inset-0 z-0"></div>
+    <div
+      class="fixed inset-0 z-0 bg-[radial-gradient(ellipse_at_top,rgba(27,42,74,0.8)_0%,#630404_70%)]"
+    ></div>
+
+    <!-- Invitation Card -->
+    <div
+      class="relative w-full max-w-[600px] bg-gradient-to-br from-[#791616] via-[#951f1f] to-navy-dark border-2 border-gold rounded-2xl overflow-hidden shadow-[0_0_40px_rgba(201,168,76,0.15),0_25px_60px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(201,168,76,0.2)] animate-fade-in z-10"
+    >
+      <!-- Inner Border Decoration -->
+      <div
+        class="absolute top-2 left-2 right-2 bottom-2 border border-gold/35 rounded-xl pointer-events-none z-20"
+      ></div>
+
       <!-- Corner Decorations -->
-      <div class="corner-decoration top-left"></div>
-      <div class="corner-decoration top-right"></div>
-      <div class="corner-decoration bottom-left"></div>
-      <div class="corner-decoration bottom-right"></div>
+      <div
+        class="absolute top-4 left-4 w-[60px] h-[60px] opacity-40 border-t-2 border-l-2 border-gold rounded-tl-sm sm:w-10 sm:h-10"
+      ></div>
+      <div
+        class="absolute top-4 right-4 w-[60px] h-[60px] opacity-40 border-t-2 border-r-2 border-gold rounded-tr-sm sm:w-10 sm:h-10"
+      ></div>
+      <div
+        class="absolute bottom-4 left-4 w-[60px] h-[60px] opacity-40 border-b-2 border-l-2 border-gold rounded-bl-sm sm:w-10 sm:h-10"
+      ></div>
+      <div
+        class="absolute bottom-4 right-4 w-[60px] h-[60px] opacity-40 border-b-2 border-r-2 border-gold rounded-br-sm sm:w-10 sm:h-10"
+      ></div>
 
       <!-- Header -->
-      <div class="header">
-        <div class="logo-area">
-          <div class="logo-circle">
-            <img
-              src="asset/logo.png"
-              alt="Apple Tree Pre School Logo"
-              onerror="
-                this.style.display = 'none';
-                this.parentElement.innerHTML +=
-                  '<span style=\'font-size:40px\'>🍎</span>';
-              "
-            />
+      <div
+        class="relative text-center pt-10 px-10 pb-2 bg-gradient-to-b from-gold/10 to-transparent"
+      >
+        <div class="flex flex-col items-center mb-5">
+          <!-- Logos -->
+          <div class="flex justify-center items-center gap-6 mb-5 sm:gap-4">
+            <div
+              class="w-40 h-40 border-2 border-gold rounded-full flex items-center justify-center bg-gold/10 relative flex-shrink-0 sm:w-32 sm:h-32"
+            >
+              <div
+                class="absolute inset-1 border border-gold/30 rounded-full"
+              ></div>
+              <img
+                src="asset/logo.png"
+                alt="Apple Tree Pre School Logo"
+                class="w-[75%] h-[75%] object-contain rounded sm:w-[70%] sm:h-[70%]"
+                onerror="
+                  this.style.display = 'none';
+                  this.parentElement.innerHTML +=
+                    '<span class=\'text-5xl sm:text-4xl\'>🍎</span>';
+                "
+              />
+            </div>
+            <div
+              class="w-40 h-40 border-2 border-gold rounded-full flex items-center justify-center bg-gold/10 relative flex-shrink-0 sm:w-32 sm:h-32"
+            >
+              <div
+                class="absolute inset-1 border border-gold/30 rounded-full"
+              ></div>
+              <img
+                src="asset/logo2.png"
+                alt="Apple Tree Pre School Logo"
+                class="w-[75%] h-[75%] object-contain rounded sm:w-[70%] sm:h-[70%]"
+                onerror="
+                  this.style.display = 'none';
+                  this.parentElement.innerHTML +=
+                    '<span class=\'text-5xl sm:text-4xl\'></span>';
+                "
+              />
+            </div>
           </div>
-          <div class="school-name">Apple Tree Pre School Kupang</div>
+
+          <!-- School Name -->
+          <div
+            class="font-playfair text-base font-semibold text-gold-light tracking-[3px] uppercase mb-1 sm:text-lg"
+          >
+            INVITATION
+          </div>
+          <div
+            class="font-playfair text-base font-semibold text-gold-light tracking-[3px] uppercase mb-1 sm:text-lg"
+          >
+            Apple Tree Pre School Kupang
+          </div>
+
+          <!-- Garis dekorasi -->
+          <div
+            class="w-[60%] h-px bg-gradient-to-r from-transparent via-gold to-transparent mx-auto mt-2 mb-3"
+          ></div>
+
+          <!-- Kalimat invitasi dinaikkan ke atas (margin dikurangi) -->
+          <div
+            class="font-montserrat text-[11px] text-gold-light/70 tracking-[3px] uppercase font-normal mb-2 leading-relaxed px-4 sm:text-[10px]"
+          >
+            It is our honour to invite you to an evening of celebration as we
+            mark a decade of growth, dedication, and community.
+          </div>
         </div>
       </div>
 
       <!-- Main Content -->
-      <div class="content">
-        <div class="invitation-text-top">Dengan hormat mengundang</div>
-        <div class="you-are-invited" id="guest-greeting">You're Invited</div>
-
-        <div class="event-title">GALA <span>DINNER</span></div>
-
-        <div class="divider">
-          <div class="divider-line"></div>
-          <div class="divider-diamond"></div>
-          <div class="divider-line"></div>
+      <div class="text-center px-10 pt-2 pb-6 sm:px-6 sm:pt-0 sm:pb-4">
+        <!-- PERBAIKAN: GALA DINNER dinaikkan ke atas sedikit (-mt-2) -->
+        <div
+          class="-mt-2 font-playfair text-4xl font-bold text-white mb-2 tracking-wider sm:text-4xl"
+        >
+          GALA <span class="text-gold">DINNER</span>
         </div>
 
-        <!-- Event Details -->
-        <div class="details-section">
-          <div class="detail-item">
-            <span class="detail-icon">📅</span>
-            <div class="detail-label">Date</div>
-            <div class="detail-value">31 Juli 2026</div>
-            <div class="detail-sub">Friday</div>
+        <div
+          class="font-greatvibes text-3xl text-gold mb-1 sm:text-3xl"
+          id="guest-subtitle"
+        >
+          "The Garden We Build Together"
+        </div>
+        <div class="font-greatvibes text-lg text-gold mb-6 sm:text-lg">
+          Celebrating 10 Years of Apple Tree Pre-School Kupang
+        </div>
+
+        <!-- Divider -->
+        <div class="flex items-center justify-center gap-4 my-6">
+          <div
+            class="w-20 h-px bg-gradient-to-r from-transparent via-gold to-transparent"
+          ></div>
+          <div
+            class="w-2 h-2 bg-gold rotate-45 opacity-70 animate-shimmer"
+          ></div>
+          <div
+            class="w-20 h-px bg-gradient-to-r from-transparent via-gold to-transparent"
+          ></div>
+        </div>
+
+        <!-- Event Details disejajarkan menggunakan Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 my-6 text-center">
+          <!-- Date -->
+          <div class="flex flex-col items-center justify-start h-full">
+            <div
+              class="text-[9px] text-gold tracking-[3px] uppercase font-medium mb-2"
+            >
+              Date
+            </div>
+            <div
+              class="font-playfair text-lg text-white font-semibold leading-snug"
+            >
+              31 Juli 2026
+            </div>
+            <div class="text-xs text-white/50 mt-1 font-light">Friday</div>
           </div>
-          <div class="detail-item">
-            <span class="detail-icon">🏨</span>
-            <div class="detail-label">Venue</div>
-            <div class="detail-value">Aston Hotel</div>
-            <div class="detail-sub">Convention Center</div>
+
+          <!-- Venue -->
+          <div class="flex flex-col items-center justify-start h-full">
+            <div
+              class="text-[9px] text-gold tracking-[3px] uppercase font-medium mb-2"
+            >
+              Venue
+            </div>
+            <div
+              class="font-playfair text-lg text-white font-semibold leading-snug"
+            >
+              Aston Hotel
+            </div>
+            <div class="text-xs text-white/50 mt-1 font-light">
+              Convention Center
+            </div>
           </div>
-          <div class="detail-item">
-            <span class="detail-icon">🕖</span>
-            <div class="detail-label">Time</div>
-            <div class="detail-value">19:00 WITA</div>
-            <div class="detail-sub">Until Finished</div>
+
+          <!-- Time -->
+          <div class="flex flex-col items-center justify-start h-full">
+            <div
+              class="text-[9px] text-gold tracking-[3px] uppercase font-medium mb-2"
+            >
+              Time
+            </div>
+            <div
+              class="font-playfair text-lg text-white font-semibold leading-snug"
+            >
+              16:30 WITA
+            </div>
+            <div class="text-xs text-white/50 mt-1 font-light">
+              Until Finished
+            </div>
           </div>
         </div>
 
-        <div class="message" id="guest-message">
-          "We cordially invite you to attend the Gala Dinner of Apple Tree Pre
-          School Kupang. Your presence would be a great honor for us."
+        <div
+          class="font-playfair text-sm font-semibold text-gold-light tracking-[3px] uppercase mb-1 mt-4"
+        >
+          DRESS CODE :
+        </div>
+        <div
+          class="font-playfair text-sm font-semibold text-gold-light tracking-[3px] capitalize sm:text-xs"
+        >
+          Evening Attire, Tenun, or Batik in Dark Tones
         </div>
       </div>
 
       <!-- QR Code Section -->
-      <div class="qr-section">
-        <div class="qr-label">Scan QR Code to confirm attendance</div>
-        <div class="qr-box" id="qr-box">
-          <!-- Container untuk QR Code dinamis -->
-          <div id="qrcode">
-            <span class="qr-loading">Generating QR...</span>
+      <div class="text-center px-10 pt-4 pb-2 sm:px-6 sm:pt-2">
+        <div
+          class="text-[9px] text-gold-light/60 tracking-[3px] uppercase mb-4 font-normal"
+        >
+          Scan QR Code to confirm attendance
+        </div>
+
+        <!-- PERBAIKAN: Box Nama dengan latar Gold di atas QR -->
+        <div class="mx-auto w-[220px] sm:w-[180px]">
+          <!-- Name Box -->
+          <div
+            class="bg-gradient-to-br from-gold-light via-gold to-gold-dark rounded-t-xl p-4 text-center shadow-lg border border-gold-dark/60 border-b-0 relative overflow-hidden"
+          >
+            <!-- Efek kilau/shimmer -->
+            <div
+              class="absolute top-0 left-0 w-full h-full bg-gradient-to-r from-transparent via-white/40 to-transparent -skew-x-12 translate-x-[-150%] animate-shimmer"
+            ></div>
+
+            <p
+              class="text-[9px] text-navy-dark/70 uppercase tracking-[2px] font-semibold mb-1 relative z-10"
+            >
+              Kepada Yth.
+            </p>
+            <h3
+              id="qr-guest-name"
+              class="font-playfair text-xl font-bold text-navy-dark leading-tight break-words relative z-10 min-h-[3rem] flex items-center justify-center px-2"
+            >
+              Nama Tamu
+            </h3>
+          </div>
+
+          <!-- QR Box (disesuaikan agar menyatu dengan box nama di atasnya) -->
+          <div
+            class="w-full h-[220px] border-2 border-gold/40 border-t-0 rounded-b-xl flex flex-col items-center justify-center bg-cream/5 relative overflow-hidden sm:h-[180px]"
+            id="qr-box"
+          >
+            <div
+              class="absolute inset-1 border border-dashed border-gold/20 rounded-b-lg"
+            ></div>
+            <div
+              id="qrcode"
+              class="flex items-center justify-center w-full h-full p-2"
+            >
+              <span class="text-[10px] text-gold animate-pulse-slow"
+                >Generating QR...</span
+              >
+            </div>
           </div>
         </div>
       </div>
 
+      <!-- Root Decoration -->
+      <div class="px-10 pb-2 sm:px-6">
+        <img
+          src="asset/rootss.png"
+          alt="Tree Roots"
+          class="w-full max-w-[250px] h-auto mx-auto object-contain opacity-90 sm:max-w-[180px]"
+          onerror="this.style.display = 'none'"
+        />
+      </div>
+
       <!-- Footer -->
-      <div class="footer">
-        <div class="rsvp-text" id="rsvp-text">
-          We look forward to your presence
+      <div class="text-center px-10 pb-10 pt-5 relative sm:px-6 sm:pb-8">
+        <div
+          class="absolute top-0 left-1/2 -translate-x-1/2 w-[40%] h-px bg-gradient-to-r from-transparent via-gold/30 to-transparent"
+        ></div>
+        <div
+          class="font-playfair text-sm text-gold-light mb-1 font-semibold tracking-wide"
+          id="rsvp-text"
+        >
+          Your presence would mean a great deal to us.
         </div>
-        <div class="footer-message" id="footer-message">
-          🍎 Apple Tree Pre School Kupang — Growing Together, Creating Together
-          🍎
+        <div
+          class="text-[11px] text-white/40 font-light tracking-wide"
+          id="footer-message"
+        >
+          Apple Tree Pre School Kupang — Growing Together, Creating Together
         </div>
       </div>
     </div>
 
     <!-- ✅ Script Personalisasi + QR Code Dinamis -->
     <script>
-      // Konfigurasi - Sesuaikan dengan URL GitHub Pages Anda
       const CONFIG = {
-        baseUrl: "https://marthynz.github.io/e-invitation/", // ⚠️ Ganti dengan URL Anda
-        confirmationEndpoint: "?confirmed=true", // Parameter untuk konfirmasi
-        qrSize: 140, // Ukuran QR Code (pixel)
-        qrColor: "#1b2a4a", // Warna QR
-        qrBgColor: "#ffffff", // Background QR
+        baseUrl: "https://marthynz.github.io/e-invitation",
+        apiEndpoint:
+          "https://script.google.com/macros/s/AKfycbw703PW01pw0ZjQbYKz7z0nZdMKkWquiPhMsoHD9k1HWnk2xTJls35t54pn9LX1iGfJvA/exec",
+        confirmationEndpoint: "&confirmed=true",
+        qrSize: 200,
+        qrColor: "#1b2a4a",
+        qrBgColor: "#ffffff",
+        tokenMap: {},
+        nameMap: {},
+        tokensLoaded: false,
+        tokensLoading: false,
       };
 
-      document.addEventListener("DOMContentLoaded", function () {
-        // Baca parameter dari URL
+      let globalSeatName = null;
+      let globalFormattedName = null;
+
+      document.addEventListener("DOMContentLoaded", async function () {
+        console.log("🚀 Invitation initialized");
         const urlParams = new URLSearchParams(window.location.search);
-        const seatName = urlParams.get("seat");
-
-        // Format nama tamu
-        const formattedName = seatName ? formatGuestName(seatName) : null;
-
-        // 1. Personalisasi teks undangan
-        personalizeInvitation(formattedName);
-
-        // 2. Generate QR Code dinamis
-        generateDynamicQR(seatName, formattedName);
+        globalSeatName = urlParams.get("seat");
+        await loadTokensFromSheet();
+        if (globalSeatName) {
+          globalFormattedName =
+            CONFIG.nameMap[globalSeatName] || formatGuestName(globalSeatName);
+          personalizeInvitation(globalFormattedName);
+          generateDynamicQR(globalSeatName, globalFormattedName);
+        }
+        if (urlParams.get("confirmed") === "true") {
+          handleConfirmation();
+        }
       });
 
-      // Format nama: marthynz → Marthynz, ibu-sari → Ibu Sari
+      async function loadTokensFromSheet() {
+        if (CONFIG.tokensLoaded || CONFIG.tokensLoading) return;
+        CONFIG.tokensLoading = true;
+        const qrContainer = document.getElementById("qrcode");
+        if (qrContainer)
+          qrContainer.innerHTML =
+            '<div class="text-[10px] text-gold animate-pulse-slow"> Loading guest data...</div>';
+        try {
+          const response = await fetch(
+            `${CONFIG.apiEndpoint}?action=getTokens`,
+          );
+          const result = await response.json();
+          if (result.success && result.tokens) {
+            CONFIG.tokenMap = result.tokens;
+            CONFIG.nameMap = result.names || {};
+            CONFIG.tokensLoaded = true;
+          } else {
+            throw new Error(result.message || "Failed to load tokens");
+          }
+        } catch (error) {
+          console.error("❌ Failed to load tokens:", error);
+          if (qrContainer) {
+            qrContainer.innerHTML =
+              '<span class="text-[10px] text-red-400 text-center p-2.5 block">❌ Gagal load data tamu<br><small>' +
+              error.message +
+              "</small><br><br>Hubungi panitia</span>";
+          }
+        } finally {
+          CONFIG.tokensLoading = false;
+        }
+      }
+
       function formatGuestName(slug) {
+        if (!slug) return "";
         return slug
           .split("-")
           .map(
@@ -632,102 +438,128 @@
           .join(" ");
       }
 
-      // Personalisasi teks undangan
       function personalizeInvitation(name) {
         if (!name) return;
 
-        const elements = {
-          "guest-greeting": `You're Invited, ${name}!`,
-          "guest-message": `"Dear <strong>${name}</strong>,<br>We cordially invite you to attend the Gala Dinner of Apple Tree Pre School Kupang. Your presence would be a great honor for us."`,
-          "footer-message": `🍎 ${name} — Apple Tree Pre School Kupang — Growing Together 🍎`,
-          "rsvp-text": `We look forward to seeing you, ${name}!`,
-        };
+        // PERBAIKAN: Update nama di Box QR Gold
+        const qrNameEl = document.getElementById("qr-guest-name");
+        if (qrNameEl) qrNameEl.textContent = name;
 
+        const elements = {
+          "footer-message": `${name} — Apple Tree Pre School Kupang — Growing Together`,
+        };
         Object.entries(elements).forEach(([id, content]) => {
           const el = document.getElementById(id);
-          if (el) {
-            if (id === "guest-message") {
-              el.innerHTML = content;
-            } else {
-              el.textContent = content;
-            }
-          }
+          if (el) el.textContent = content;
         });
 
         document.title = `Invitation for ${name} | Apple Tree Pre School Kupang`;
       }
 
-      // Generate QR Code dinamis berdasarkan seat parameter
       function generateDynamicQR(seatName, formattedName) {
         const qrContainer = document.getElementById("qrcode");
-
-        // Jika tidak ada seat parameter, tampilkan QR statis (fallback)
         if (!seatName || seatName.trim() === "") {
           qrContainer.innerHTML =
-            "<img src=\"asset/qr.png\" alt=\"QR Code\" style=\"max-width:90%; max-height:90%; border-radius:4px;\" onerror=\"this.style.display='none'; qrContainer.innerHTML = '<span style=\\'font-size:36px; opacity:0.5\\'>📱</span><span style=\\'font-size:10px; color:rgba(201,168,76,0.4)\\'>QR Code</span>'\">";
+            '<span class="text-3xl opacity-50">📱</span><span class="text-[10px] text-gold/40 block mt-2">QR Code</span>';
           return;
         }
-
-        // Data yang akan di-encode dalam QR Code
-        // Opsi 1: Link konfirmasi kehadiran
-        const confirmationUrl = `${CONFIG.baseUrl}?seat=${encodeURIComponent(seatName)}${CONFIG.confirmationEndpoint}`;
-
-        // Opsi 2: JSON data (jika ingin menyimpan info lebih lengkap)
-        // const qrData = JSON.stringify({
-        //   guest: formattedName,
-        //   seat: seatName,
-        //   event: 'Gala Dinner Apple Tree Pre School Kupang',
-        //   date: '2026-07-31',
-        //   action: 'confirm-attendance'
-        // });
-
-        // Hapus loading text
+        if (!CONFIG.tokensLoaded) {
+          if (!CONFIG.tokensLoading) loadTokensFromSheet();
+          else {
+            qrContainer.innerHTML =
+              '<div class="text-[10px] text-gold animate-pulse-slow">⏳ Loading guest data...</div>';
+            setTimeout(() => generateDynamicQR(seatName, formattedName), 1000);
+          }
+          return;
+        }
+        const token = CONFIG.tokenMap[seatName];
+        if (!token) {
+          qrContainer.innerHTML =
+            '<span class="text-[10px] text-red-400 text-center p-2.5 block">❌ Tamu tidak ditemukan<br><small>Seat: ' +
+            seatName +
+            "</small><br><br>Hubungi panitia</span>";
+          return;
+        }
+        const confirmationUrl = `${CONFIG.baseUrl}?seat=${encodeURIComponent(seatName)}&token=${encodeURIComponent(token)}${CONFIG.confirmationEndpoint}`;
         qrContainer.innerHTML = "";
-
-        // Generate QR Code menggunakan library qrcode.js
         try {
           new QRCode(qrContainer, {
-            text: confirmationUrl, // Data yang di-encode
-            width: CONFIG.qrSize, // Lebar QR
-            height: CONFIG.qrSize, // Tinggi QR
-            colorDark: CONFIG.qrColor, // Warna QR
-            colorLight: CONFIG.qrBgColor, // Background QR
-            correctLevel: QRCode.CorrectLevel.H, // Error correction level (H = highest)
+            text: confirmationUrl,
+            width: CONFIG.qrSize,
+            height: CONFIG.qrSize,
+            colorDark: CONFIG.qrColor,
+            colorLight: CONFIG.qrBgColor,
+            correctLevel: QRCode.CorrectLevel.H,
           });
-
-          console.log(`✅ QR Code generated for: ${formattedName}`);
-          console.log(`🔗 Encoded URL: ${confirmationUrl}`);
         } catch (error) {
-          console.error("❌ Failed to generate QR Code:", error);
+          console.error(" Failed to generate QR Code:", error);
           qrContainer.innerHTML =
-            '<span style="font-size:10px; color:#ff6b6b;">QR Error</span>';
+            '<span class="text-[10px] text-red-400">QR Error</span>';
         }
       }
 
-      // ✅ Bonus: Fungsi untuk handle konfirmasi saat QR discan
-      // Panggil fungsi ini jika halaman dibuka dengan parameter ?confirmed=true
-      function handleConfirmation() {
+      async function handleConfirmation() {
         const urlParams = new URLSearchParams(window.location.search);
-        const isConfirmed = urlParams.get("confirmed") === "true";
         const seatName = urlParams.get("seat");
-
-        if (isConfirmed && seatName) {
-          const formattedName = formatGuestName(seatName);
-
-          // Tampilkan pesan sukses (opsional: bisa diganti dengan modal/popup)
-          setTimeout(() => {
-            alert(
-              `🎉 Thank you, ${formattedName}!\n\nYour attendance has been confirmed for the Gala Dinner.\n\n📅 31 Juli 2026 | 🏨 Aston Hotel Convention Center`,
-            );
-
-            // Opsional: Redirect ke halaman "thank you"
-            // window.location.href = CONFIG.baseUrl + 'thank-you.html?seat=' + seatName;
-          }, 1000);
+        const token = urlParams.get("token");
+        if (!seatName || !token) {
+          showErrorMessage(
+            "Link tidak lengkap. Pastikan URL berisi parameter seat dan token.",
+          );
+          return;
+        }
+        showLoadingModal();
+        try {
+          const response = await fetch(
+            `${CONFIG.apiEndpoint}?action=confirm&seat=${encodeURIComponent(seatName)}&token=${encodeURIComponent(token)}`,
+          );
+          const result = await response.json();
+          hideLoadingModal();
+          if (result.success) {
+            showSuccessModal(result.guest_name, result.checked_at);
+          } else {
+            if (result.already_checked_in)
+              showAlreadyCheckedInModal(
+                result.guest_name || "Tamu",
+                result.checked_at,
+              );
+            else showErrorMessage(result.message || "Token tidak valid");
+          }
+        } catch (error) {
+          hideLoadingModal();
+          showErrorMessage("Gagal terhubung ke server. Silakan coba lagi.");
         }
       }
 
-      // Jalankan handle confirmation jika parameter ada
-      handleConfirmation();
+      function showLoadingModal() {
+        const modal = document.createElement("div");
+        modal.id = "loading-modal";
+        modal.innerHTML = `<div class="fixed inset-0 bg-[rgba(15,26,48,0.9)] flex items-center justify-center z-[9999]"><div class="text-center text-gold-light"><div class="text-5xl mb-5 animate-spin-slow">⏳</div><div class="font-playfair text-lg">Memverifikasi...</div></div></div>`;
+        document.body.appendChild(modal);
+      }
+
+      function hideLoadingModal() {
+        const modal = document.getElementById("loading-modal");
+        if (modal) modal.remove();
+      }
+
+      function showSuccessModal(name, checkedAt) {
+        const modal = document.createElement("div");
+        modal.innerHTML = `<div class="fixed inset-0 bg-[rgba(15,26,48,0.95)] flex items-center justify-center z-[9999] p-5"><div class="bg-gradient-to-br from-[#1e2d4f] to-[#162240] border-2 border-gold rounded-2xl p-10 max-w-[450px] w-full text-center shadow-[0_0_60px_rgba(201,168,76,0.3)]"><div class="text-6xl mb-5 animate-scale-in">✅</div><h2 class="font-playfair text-gold-light text-3xl mb-4">Check-In Berhasil!</h2><p class="text-lg text-white mb-2.5">Selamat datang,</p><h3 class="font-greatvibes text-gold text-4xl mb-5">${name}</h3><div class="bg-gold/10 rounded-lg p-4 my-5"><p class="text-sm text-white/70 mb-2">📅 Gala Dinner - Apple Tree Pre School</p><p class="text-sm text-white/70 mb-2">🏨 Aston Hotel Convention Center</p><p class="text-sm text-white/70"> 31 Juli 2026 | 16:30 WITA</p></div><p class="text-xs text-white/50 mt-5">Checked in: ${new Date(checkedAt).toLocaleString("id-ID")}</p><button onclick="this.closest('div').parentElement.remove()" class="mt-6 px-8 py-3 bg-gradient-to-r from-gold to-gold-dark border-none rounded-lg text-[#0f1a30] font-semibold text-sm cursor-pointer transition-transform hover:scale-105">Tutup</button></div></div>`;
+        document.body.appendChild(modal);
+      }
+
+      function showAlreadyCheckedInModal(name, checkedAt) {
+        const modal = document.createElement("div");
+        modal.innerHTML = `<div class="fixed inset-0 bg-[rgba(15,26,48,0.95)] flex items-center justify-center z-[9999] p-5"><div class="bg-gradient-to-br from-[#1e2d4f] to-[#162240] border-2 border-gold-light rounded-2xl p-10 max-w-[450px] w-full text-center"><div class="text-6xl mb-5">ℹ️</div><h2 class="font-playfair text-gold-light text-2xl mb-4">Sudah Check-In</h2><p class="text-base text-white mb-2.5">${name}</p><p class="text-sm text-white/70 mb-5">Anda sudah melakukan check-in pada:</p><div class="bg-gold-light/10 rounded-lg p-4 my-5"><p class="text-base text-gold-light font-playfair">${new Date(checkedAt).toLocaleString("id-ID")}</p></div><button onclick="this.closest('div').parentElement.remove()" class="mt-5 px-8 py-3 bg-gold/20 border border-gold rounded-lg text-gold-light font-semibold cursor-pointer">Tutup</button></div></div>`;
+        document.body.appendChild(modal);
+      }
+
+      function showErrorMessage(msg) {
+        const modal = document.createElement("div");
+        modal.innerHTML = `<div class="fixed inset-0 bg-[rgba(15,26,48,0.95)] flex items-center justify-center z-[9999] p-5"><div class="bg-gradient-to-br from-[#1e2d4f] to-[#162240] border-2 border-red-400 rounded-2xl p-10 max-w-[400px] w-full text-center"><div class="text-6xl mb-5">❌</div><h2 class="font-playfair text-red-400 text-2xl mb-4">Akses Ditolak</h2><p class="text-sm text-white/80 mb-6">${msg}</p><button onclick="this.closest('div').parentElement.remove();window.location.href='${CONFIG.baseUrl}'" class="px-8 py-3 bg-red-400/20 border border-red-400 rounded-lg text-red-400 font-semibold cursor-pointer">Kembali</button></div></div>`;
+        document.body.appendChild(modal);
+      }
     </script>
   </body>
 </html>
