@@ -65,12 +65,11 @@
           radial-gradient(1px 1px at 60% 20%, #fce38a, transparent),
           radial-gradient(2px 2px at 80% 60%, #ccbd6d, transparent),
           radial-gradient(1px 1px at 10% 80%, #fce38a, transparent),
-          radial-gradient(2px 2px at 70% 40%, #ccbd6d, transparent),
-          opacity: 0.4;
+          radial-gradient(2px 2px at 70% 40%, #ccbd6d, transparent);
+        opacity: 0.4;
         pointer-events: none;
       }
 
-      /* Responsive adjustments */
       @media (max-width: 640px) {
         .logo-size {
           width: 3rem !important;
@@ -122,7 +121,6 @@
 
       <!-- Header Section -->
       <div class="relative px-4 sm:px-6 md:px-8 pt-6 sm:pt-8 pb-4 sm:pb-6">
-        <!-- Top Row: Logo Left + School Name (Center) + Logo Right -->
         <div class="flex justify-between items-center mb-4 sm:mb-6">
           <!-- Logo Left -->
           <div
@@ -189,9 +187,10 @@
             >
               Dear Mr / Mrs / Ms
             </p>
+            <!-- ✅ PERBAIKAN 1: line-clamp-2 membatasi maksimal 2 baris, break-words mencegah teks keluar kotak -->
             <h3
               id="qr-guest-name"
-              class="font-playfair text-lg sm:text-2xl font-bold text-navy-dark"
+              class="font-playfair text-lg sm:text-2xl font-bold text-navy-dark leading-snug line-clamp-2 break-words"
             >
               Nama Tamu
             </h3>
@@ -215,7 +214,6 @@
 
       <!-- Main Content -->
       <div class="px-4 sm:px-6 md:px-8 py-4 sm:py-6 text-center">
-        <!-- Opening Text -->
         <p
           class="font-montserrat text-[9px] sm:text-[11px] text-gold-light/80 tracking-[1px] sm:tracking-[2px] uppercase leading-relaxed mb-4 sm:mb-6 px-2"
         >
@@ -223,7 +221,6 @@
           a decade of growth, dedication, and community.
         </p>
 
-        <!-- Event Title -->
         <div class="mb-3 sm:mb-4">
           <h1
             class="font-playfair text-2xl sm:text-4xl font-bold text-white mb-2 sm:mb-3 tracking-wider"
@@ -240,7 +237,6 @@
           </div>
         </div>
 
-        <!-- Divider -->
         <div
           class="flex items-center justify-center gap-3 sm:gap-4 my-4 sm:my-6"
         >
@@ -253,7 +249,6 @@
           ></div>
         </div>
 
-        <!-- Event Details -->
         <div class="grid grid-cols-3 gap-3 sm:gap-6 mb-4 sm:mb-6">
           <div class="text-center">
             <div
@@ -302,7 +297,6 @@
           </div>
         </div>
 
-        <!-- Dress Code -->
         <div class="mb-4 sm:mb-6">
           <div
             class="font-playfair text-xs sm:text-sm font-semibold text-gold tracking-[2px] uppercase mb-1 sm:mb-2"
@@ -325,17 +319,19 @@
         >
           Your presence would mean a great deal to us.
         </div>
-        <div
-          class="text-[10px] sm:text-xs text-white/50"
-          id="footer-message"
-        ></div>
+        <div class="text-[10px] sm:text-xs text-white/50" id="footer-message">
+          🍎 Apple Tree Pre School Kupang — Growing Together 🍎
+        </div>
       </div>
     </div>
 
     <!-- JavaScript -->
     <script>
       const CONFIG = {
-        baseUrl: "https://marthynz.github.io/e-invitation",
+        // ✅ PERBAIKAN 2: baseUrl HARUS berupa link website (HTTPS), BUKAN file:///
+        // Ganti dengan URL GitHub Pages, Vercel, atau hosting Anda yang sebenarnya.
+        baseUrl: "https://appletreepreschoolkupan.github.io/e-invitation",
+
         apiEndpoint:
           "https://script.google.com/macros/s/AKfycbw703PW01pw0ZjQbYKz7z0nZdMKkWquiPhMsoHD9k1HWnk2xTJls35t54pn9LX1iGfJvA/exec",
         confirmationEndpoint: "&confirmed=true",
@@ -344,6 +340,7 @@
         qrBgColor: "#ffffff",
         tokenMap: {},
         nameMap: {},
+        guestData: [],
         tokensLoaded: false,
         tokensLoading: false,
       };
@@ -351,16 +348,60 @@
       let globalSeatName = null;
       let globalFormattedName = null;
 
+      // Fungsi perbaikan URL untuk menangani karakter '&' yang rusak
+      function getRobustSeatParam() {
+        const search = window.location.search;
+        const urlParams = new URLSearchParams(search);
+        let rawSeat = urlParams.get("seat") || "";
+
+        if (rawSeat && rawSeat.endsWith("-")) {
+          const allKeys = Array.from(urlParams.keys());
+          const brokenParts = allKeys.filter((key) => key.startsWith("-"));
+
+          if (brokenParts.length > 0) {
+            rawSeat =
+              rawSeat.slice(0, -1) + brokenParts.join("").replace(/^-/, "-");
+            console.log(
+              "⚠️ URL terdeteksi rusak, diperbaiki otomatis menjadi:",
+              rawSeat,
+            );
+          }
+        }
+        return rawSeat.trim();
+      }
+
       document.addEventListener("DOMContentLoaded", async function () {
-        const urlParams = new URLSearchParams(window.location.search);
-        globalSeatName = urlParams.get("seat");
+        const rawSeatName = getRobustSeatParam();
+
+        // 1. Load data dari Google Sheet terlebih dahulu
         await loadTokensFromSheet();
-        if (globalSeatName) {
-          globalFormattedName =
-            CONFIG.nameMap[globalSeatName] || formatGuestName(globalSeatName);
+
+        // 2. Proses nama tamu
+        if (rawSeatName) {
+          globalSeatName = rawSeatName;
+
+          const guest = CONFIG.guestData.find(
+            (g) => g.seat.toLowerCase() === globalSeatName.toLowerCase(),
+          );
+
+          if (guest && guest.name) {
+            globalSeatName = guest.seat;
+            globalFormattedName = guest.name;
+          } else {
+            globalFormattedName = formatGuestName(globalSeatName);
+          }
+
           personalizeInvitation(globalFormattedName);
           generateDynamicQR(globalSeatName);
+        } else {
+          const exampleName = "Tamu Undangan";
+          document.getElementById("qr-guest-name").textContent = exampleName;
+          document.getElementById("footer-message").textContent =
+            `🍎 ${exampleName} — Apple Tree Pre School Kupang — Growing Together 🍎`;
+          document.title = `Invitation | Apple Tree Pre School Kupang`;
         }
+
+        const urlParams = new URLSearchParams(window.location.search);
         if (urlParams.get("confirmed") === "true") {
           handleConfirmation();
         }
@@ -369,18 +410,37 @@
       async function loadTokensFromSheet() {
         if (CONFIG.tokensLoaded || CONFIG.tokensLoading) return;
         CONFIG.tokensLoading = true;
+
+        const qrContainer = document.getElementById("qrcode");
+        if (qrContainer) {
+          qrContainer.innerHTML =
+            '<div class="text-[10px] text-gold animate-pulse-slow">Loading guest data...</div>';
+        }
+
         try {
           const response = await fetch(
             `${CONFIG.apiEndpoint}?action=getTokens`,
           );
           const result = await response.json();
-          if (result.success && result.tokens) {
-            CONFIG.tokenMap = result.tokens;
+
+          if (result.success) {
+            CONFIG.tokenMap = result.tokens || {};
             CONFIG.nameMap = result.names || {};
+            CONFIG.guestData = result.data || [];
             CONFIG.tokensLoaded = true;
+
+            if (globalSeatName) {
+              generateDynamicQR(globalSeatName);
+            }
+          } else {
+            throw new Error(result.message || "Failed to load tokens");
           }
         } catch (error) {
-          console.error("Failed to load tokens:", error);
+          console.error("❌ Failed to load tokens:", error);
+          if (qrContainer) {
+            qrContainer.innerHTML =
+              '<span class="text-[10px] text-red-400 text-center p-2.5 block">❌ Gagal load data<br><small>Periksa koneksi atau deploy ulang Apps Script</small></span>';
+          }
         } finally {
           CONFIG.tokensLoading = false;
         }
@@ -388,8 +448,9 @@
 
       function formatGuestName(slug) {
         if (!slug) return "";
-        return slug
-          .split("-")
+        let cleanSlug = slug.replace(/%26/gi, " & ").replace(/-/g, " ");
+        return cleanSlug
+          .split(" ")
           .map(
             (word) =>
               word.charAt(0).toUpperCase() + word.slice(1).toLowerCase(),
@@ -399,46 +460,75 @@
 
       function personalizeInvitation(name) {
         if (!name) return;
+
         const qrNameEl = document.getElementById("qr-guest-name");
         if (qrNameEl) qrNameEl.textContent = name;
+
+        const footerEl = document.getElementById("footer-message");
+        if (footerEl) {
+          footerEl.textContent = `🍎 ${name} — Apple Tree Pre School Kupang — Growing Together 🍎`;
+        }
 
         document.title = `Invitation for ${name} | Apple Tree Pre School Kupang`;
       }
 
       function generateDynamicQR(seatName) {
         const qrContainer = document.getElementById("qrcode");
-        if (!seatName || !CONFIG.tokensLoaded) {
-          setTimeout(() => generateDynamicQR(seatName), 1000);
+        if (!seatName) {
+          qrContainer.innerHTML =
+            '<span class="text-3xl opacity-50">📱</span><span class="text-[10px] text-gold/40 block mt-2">QR Code</span>';
           return;
         }
+
+        if (!CONFIG.tokensLoaded) {
+          if (!CONFIG.tokensLoading) loadTokensFromSheet();
+          else {
+            setTimeout(() => generateDynamicQR(seatName), 1000);
+          }
+          return;
+        }
+
         const token = CONFIG.tokenMap[seatName];
         if (!token) {
           qrContainer.innerHTML =
-            '<span class="text-red-400 text-[8px] sm:text-[10px]">Error</span>';
+            '<span class="text-[10px] text-red-400 text-center p-2 block">❌ Token tidak ditemukan<br><small>Pastikan "seat" di URL sama persis dengan di Google Sheet</small></span>';
           return;
         }
+
+        // ✅ PERBAIKAN 3: Memastikan URL yang di-generate adalah URL Website (HTTPS), bukan file lokal
         const confirmationUrl = `${CONFIG.baseUrl}?seat=${encodeURIComponent(seatName)}&token=${encodeURIComponent(token)}${CONFIG.confirmationEndpoint}`;
+
+        // Debug: Lihat URL yang akan di-scan di Console browser (F12)
+        console.log("✅ Generated QR URL:", confirmationUrl);
+
         qrContainer.innerHTML = "";
-        new QRCode(qrContainer, {
-          text: confirmationUrl,
-          width: CONFIG.qrSize,
-          height: CONFIG.qrSize,
-          colorDark: CONFIG.qrColor,
-          colorLight: CONFIG.qrBgColor,
-          correctLevel: QRCode.CorrectLevel.H,
-        });
+
+        try {
+          new QRCode(qrContainer, {
+            text: confirmationUrl,
+            width: CONFIG.qrSize,
+            height: CONFIG.qrSize,
+            colorDark: CONFIG.qrColor,
+            colorLight: CONFIG.qrBgColor,
+            correctLevel: QRCode.CorrectLevel.H,
+          });
+        } catch (error) {
+          console.error("Failed to generate QR Code:", error);
+          qrContainer.innerHTML =
+            '<span class="text-[10px] text-red-400">QR Error</span>';
+        }
       }
 
       async function handleConfirmation() {
         const urlParams = new URLSearchParams(window.location.search);
         const seatName = urlParams.get("seat");
         const token = urlParams.get("token");
+
         if (!seatName || !token) {
           showCustomAlert("Error", "Link tidak lengkap", "error");
           return;
         }
 
-        // Show loading
         showCustomAlert("Memverifikasi...", "Mohon tunggu sebentar", "loading");
 
         try {
@@ -448,7 +538,6 @@
           const result = await response.json();
 
           if (result.success) {
-            // PERBAIKAN: Gunakan optional chaining dan fallback
             const guestName =
               result.guest?.name ||
               result.guest_name ||
@@ -474,13 +563,10 @@
         }
       }
 
-      // PERBAIKAN: Fungsi alert custom yang lebih baik
       function showCustomAlert(title, message, type = "info") {
-        // Hapus alert yang sudah ada
         const existingAlert = document.getElementById("custom-alert");
         if (existingAlert) existingAlert.remove();
 
-        // Warna berdasarkan tipe
         const colors = {
           success: {
             bg: "bg-green-900/95",
@@ -504,7 +590,6 @@
 
         const color = colors[type] || colors.info;
 
-        // Buat elemen alert
         const alertDiv = document.createElement("div");
         alertDiv.id = "custom-alert";
         alertDiv.className =
@@ -531,7 +616,6 @@
 
         document.body.appendChild(alertDiv);
 
-        // Auto-close untuk loading
         if (type === "loading") {
           setTimeout(() => {
             const alert = document.getElementById("custom-alert");
